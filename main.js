@@ -16,21 +16,20 @@ let player = {
     y: 0,
     draw: function() {
         context.fillStyle = "black";
-        context.fillRect((this.x * 100) + offsetx, (this.y * 100) + offsety, 100, 100);
+        context.fillRect((this.x * 100) + 5 + offsetx, (this.y * 100) + 5 + offsety, 90, 90);
     }
 }
 
 /*basically not a*/class Enemy {
-
 }
 
-setInterval(loop, 33);
+setInterval(loop, 20);
 
 let xpframes = 0;
 let xmframes = 0;
 let ypframes = 0;
 let ymframes = 0;
-const buffer = 7;
+const buffer = 10;
 const grid = 2;
 
 function loop() {
