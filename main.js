@@ -24,15 +24,15 @@ function drawBoard() {
 }
 
 let player = {
-    x: 0,
-    y: 0,
+    x: 1,
+    y: 1,
     draw: function() {
         context.fillStyle = "black";
         context.fillRect((this.x * 100) + 5 + offsetx, (this.y * 100) + 5 + offsety, 90, 90);
     }
 }
 let goal = {
-    x: 0,
+    x: -1,
     y: 0,
     draw: function() {
         context.fillStyle = "green";
@@ -69,7 +69,7 @@ class Enemy {
     }
     draw() {
         context.fillStyle = "red";
-        context.fillRect(Math.round(this.x * 100) + 20 + offsetx, Math.round(this.y * 100) + 20 + offsety, 70, 70);
+        context.fillRect(Math.round(this.x * 100) + 20 + offsetx, Math.round(this.y * 100) + 20 + offsety, 60, 60);
     }
     move() {
         if(this.axis === 0)
@@ -81,6 +81,7 @@ class Enemy {
         }
 }
 
+goal.resetPos();
 setInterval(loop, 20);
 
 function loop() {
@@ -114,6 +115,7 @@ function loop() {
     if(player.y > grid)
         player.y = grid;
     drawBoard();
+    goal.draw();
     player.draw();
     for(enemy of bodies) {
         enemy.move();
