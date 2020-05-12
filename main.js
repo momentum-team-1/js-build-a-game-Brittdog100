@@ -17,10 +17,23 @@ const grid = 2;
 const maxes = 2;
 const espeed = 0.025;
 let score = 0;
+let scoreframes = 0;
+const scorefade = 10;
+let high = 0;
 
 function drawBoard() {
     context.fillStyle = "blue";
     context.fillRect(offsetx, offsety, 300, 300)
+}
+
+function drawScore() {
+    context.font = "64px Arial";
+    context.fillStyle = "rgba(255, 255, 255, 0.5)";
+    context.fillText(score, 150 + offsetx, 150 + offsety, 300)
+}
+
+function testCollision(e) {
+    
 }
 
 let player = {
@@ -123,4 +136,5 @@ function loop() {
     }
     if(Math.random() < 0.05 && bodies.length <= maxes)
         new Enemy();
+    drawScore();
 }
