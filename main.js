@@ -20,6 +20,8 @@ let score = 0;
 let scoreframes = 0;
 const scorefade = 10;
 let high = 0;
+let ggf = 0;
+let grf = 150;
 
 function drawBoard() {
     context.fillStyle = "blue";
@@ -27,9 +29,14 @@ function drawBoard() {
 }
 
 function drawScore() {
-    context.font = "64px Arial";
-    context.fillStyle = "rgba(255, 255, 255, 0.5)";
-    context.fillText(score, 150 + offsetx, 150 + offsety, 300)
+    context.font = "32px Arial";
+    context.fillStyle = "rgba(0, 0, 0, 0.75)";
+    context.fillText(`Score: ${score}`, 10, 30)
+}
+function drawHigh() {
+    context.font = "32px Arial";
+    context.fillStyle = "rgba(0, 0, 0, 0.75)";
+    context.fillText(`High: ${high}`, 10, 65);
 }
 
 function testCollision(e) {
@@ -57,6 +64,7 @@ let player = {
 let goal = {
     x: -1,
     y: 0,
+    exists: false,
     draw: function() {
         context.fillStyle = "green";
         context.fillRect((this.x * 100) + 30 + offsetx, (this.y * 100) + 30 + offsety, 40, 40);
@@ -66,11 +74,15 @@ let goal = {
         this.y = Math.round(Math.random() * 2);
         if(this.x === player.x && this.y === player.y)
             this.resetPos();
+        ggf = 0;
+        this.exists = true;
     },
     getBounds: function() { return { x: (this.x + 0.3), y: (this.y + 0.3), w: 0.4}; },
     onCollide: function() {
         score++;
-        this.resetPos();
+        if(score > high)
+            high = score;
+        this.exists = false;
     }
 }
 
@@ -82,15 +94,15 @@ class Enemy {
         this.y = 0;
         if(this.axis === 0) {
             if(this.dir === 1)
-                this.x = -1;
+                this.x = -2;
             else
-                this.x = 3;
+                this.x = 4;
             this.y = Math.round(Math.random() * 2);
         } else {
             if(this.dir === 1)
-                this.y = -1;
+                this.y = -2;
             else
-                this.y = 3;
+                this.y = 4;
             this.x = Math.round(Math.random() * 2);
         }
         bodies.push(this);
@@ -104,7 +116,7 @@ class Enemy {
             this.x += espeed * this.dir;
         else
             this.y += espeed * this.dir;
-        if(this.x > 3 || this.y > 3 || this.x < -1 || this.y < -1)
+        if(this.x > 4 || this.y > 4 || this.x < -2 || this.y < -2)
             bodies.splice(bodies.indexOf(this), 1);
     }
     getBounds() { return { x: (this.x + 0.2), y: (this.y + 0.2), w: 0.6 } }
@@ -145,15 +157,19 @@ function loop() {
     if(player.y > grid)
         player.y = grid;
     drawBoard();
-    goal.draw();
+    if(goal.exists) {
+        goal.draw();
+        testCollision(goal);
+    } else if(ggf++ > grf)
+        goal.resetPos();
     player.draw();
     for(enemy of bodies) {
+        testCollision(enemy);
         enemy.move();
         enemy.draw();
-        testCollision(enemy);
     }
-    testCollision(goal);
     if(Math.random() < 0.05 && bodies.length <= maxes)
         new Enemy();
     drawScore();
+    drawHigh();
 }
