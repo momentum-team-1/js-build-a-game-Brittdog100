@@ -22,6 +22,7 @@ const scorefade = 10;
 let high = 0;
 let ggf = 0;
 let grf = 150;
+let tsle = 0;
 
 function drawBoard() {
     context.fillStyle = "blue";
@@ -168,8 +169,10 @@ function loop() {
         enemy.move();
         enemy.draw();
     }
-    if(Math.random() < 0.05 && bodies.length <= maxes)
+    if(Math.random() < (0.01 * (tsle++ / 50)) && bodies.length <= maxes) {
+        tsle = 0;
         new Enemy();
+    }
     drawScore();
     drawHigh();
 }
