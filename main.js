@@ -33,7 +33,16 @@ function drawScore() {
 }
 
 function testCollision(e) {
-    
+    let pb = player.getBounds();
+    let PX = pb.x + pb.w;
+    let PY = pb.y + pb.w;
+    let eb = e.getBounds();
+    let EX = eb.x + eb.w;
+    let EY = eb.y + eb.w;
+    let lr = (eb.x > pb.x && eb.x < PX) || (EX > pb.x && EX < PX);
+    let ud = (eb.y > pb.y && eb.y < PY) || (EY > pb.y && EY < PY);
+    if(lr && ud)
+        e.onCollide();
 }
 
 let player = {
@@ -42,7 +51,8 @@ let player = {
     draw: function() {
         context.fillStyle = "black";
         context.fillRect((this.x * 100) + 5 + offsetx, (this.y * 100) + 5 + offsety, 90, 90);
-    }
+    },
+    getBounds: function() { return { x: (this.x + 0.05), y: (this.y + 0.05), w: 0.9}; }
 }
 let goal = {
     x: -1,
@@ -56,6 +66,11 @@ let goal = {
         this.y = Math.round(Math.random() * 2);
         if(this.x === player.x && this.y === player.y)
             this.resetPos();
+    },
+    getBounds: function() { return { x: (this.x + 0.3), y: (this.y + 0.3), w: 0.4}; },
+    onCollide: function() {
+        score++;
+        this.resetPos();
     }
 }
 
@@ -91,7 +106,9 @@ class Enemy {
             this.y += espeed * this.dir;
         if(this.x > 3 || this.y > 3 || this.x < -1 || this.y < -1)
             bodies.splice(bodies.indexOf(this), 1);
-        }
+    }
+    getBounds() { return { x: (this.x + 0.2), y: (this.y + 0.2), w: 0.6 } }
+    onCollide() { score = 0; }
 }
 
 goal.resetPos();
@@ -133,7 +150,9 @@ function loop() {
     for(enemy of bodies) {
         enemy.move();
         enemy.draw();
+        testCollision(enemy);
     }
+    testCollision(goal);
     if(Math.random() < 0.05 && bodies.length <= maxes)
         new Enemy();
     drawScore();
